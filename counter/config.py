@@ -2,7 +2,7 @@ import os
 
 from counter.adapters.count_repo import CountMongoDBRepo, CountInMemoryRepo
 from counter.adapters.object_detector import TFSObjectDetector, FakeObjectDetector
-from counter.domain.actions import CountDetectedObjects
+from counter.domain.actions import CountDetectedObjects, PredictObjects
 
 
 def dev_count_action() -> CountDetectedObjects:
@@ -23,3 +23,24 @@ def get_count_action() -> CountDetectedObjects:
     env = os.environ.get('ENV', 'dev')
     count_action_fn = f"{env}_count_action"
     return globals()[count_action_fn]()
+
+
+def dev_prediction_action() -> PredictObjects:
+    return PredictObjects(FakeObjectDetector())
+
+
+def prod_prediction_action() -> PredictObjects:
+    tfs_host = os.environ.get('TFS_HOST', 'localhost')
+    tfs_port = os.environ.get('TFS_PORT', 8501)
+    return PredictObjects(TFSObjectDetector(host=tfs_host, port=tfs_port))
+
+
+def get_prediction_action():
+    env = os.environ.get('ENV', 'dev')
+    return action_functions_mapper[f"{env}_prediction_action"]()
+
+
+action_functions_mapper = {
+    "dev_prediction_action": dev_prediction_action,
+    "prod_prediction_action": prod_prediction_action,
+}
