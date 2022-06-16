@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from counter.domain.actions import CountDetectedObjects
+from counter.domain.actions import CountDetectedObjects, PredictObjects
 from counter.domain.models import ObjectCount
 from tests.domain.helpers import generate_prediction
 
@@ -31,3 +31,11 @@ class TestCountDetectedObjects:
         CountDetectedObjects(object_detector, count_object_repo).execute(None, 0)
         count_object_repo.update_values.assert_called_with(
             [ObjectCount('cat', 2), ObjectCount('dog', 2), ObjectCount('rabbit', 1)])
+
+    def test_predict_detected_objects(self, object_detector) -> None:
+        response = PredictObjects(object_detector).execute(None, 0.5)
+        assert response.predictions == \
+               [generate_prediction('cat', 0.9),
+                generate_prediction('cat', 0.8),
+                generate_prediction('dog', 0.8),
+                generate_prediction('rabbit', 0.9)]
