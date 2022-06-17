@@ -1,7 +1,7 @@
 PHONY=serving mongo app
 
-model_download:
-	./scripts/model_download.sh
+download_model:
+	./scripts/download_model.sh
 
 serving:
 	./scripts/run_tensorflow_serving.sh

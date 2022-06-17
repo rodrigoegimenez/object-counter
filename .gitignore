@@ -160,4 +160,4 @@ cython_debug/
 .idea/
 
 # Makefile artifacts
-model_download
+download_model

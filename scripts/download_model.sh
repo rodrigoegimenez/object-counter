@@ -9,6 +9,6 @@ chmod -R 777 tmp/rfcn_resnet101_coco_2018_01_28
 mkdir -p tmp/model/1
 mv tmp/rfcn_resnet101_coco_2018_01_28/saved_model/saved_model.pb tmp/model/1
 rm -rf tmp/rfcn_resnet101_coco_2018_01_28
-echo "Delete this file to force model download." >model_download
+echo "Delete this file to force model download." >download_model
 
-echo "Model downloaded, to download it again delete the file model_download from the root folder."
+echo "Model downloaded, to download it again delete the file download_model from the root folder."
