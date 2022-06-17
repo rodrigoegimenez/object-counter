@@ -13,7 +13,6 @@ def prod_count_action() -> CountDetectedObjects:
     tfs_host = os.environ.get('TFS_HOST', 'localhost')
     tfs_port = os.environ.get('TFS_PORT', 8501)
     db_engine = os.environ.get("DB_ENGINE", "mongo")
-    print(db_engine)
     detector = TFSObjectDetector(tfs_host, tfs_port)
     if db_engine == "mongo":
         mongo_host = os.environ.get('MONGO_HOST', 'localhost')

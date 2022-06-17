@@ -40,7 +40,6 @@ class PredictObjects:
 
     def execute(self, image, threshold, model_name) -> PredictionResponse:
         predictions = self.__find_valid_predictions(image, threshold, model_name)
-        print(predictions)
         return PredictionResponse(predictions=predictions)
 
     def __find_valid_predictions(self, image, threshold, model_name):

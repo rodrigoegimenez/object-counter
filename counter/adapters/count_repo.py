@@ -1,8 +1,10 @@
+from time import sleep
 from typing import List
 
 from pymongo import MongoClient
 from sqlalchemy import Column, Integer, String, create_engine, select, update, insert
 from sqlalchemy.orm import declarative_base, Session
+from sqlalchemy.exc import OperationalError
 
 from counter.domain.models import ObjectCount
 from counter.domain.ports import ObjectCountRepo
@@ -67,12 +69,22 @@ class CountPostgresDBRepo(ObjectCountRepo):
         count = Column(Integer, unique=False, nullable=False)
 
     def __init__(self, host, port, database, user, password):
-        self.__engine = create_engine(
-            f"postgresql://{user}:{password}@{host}:{port}/{database}",
-            echo=True,
-            future=True,
-        )
-        self.Base.metadata.create_all(self.__engine)
+        attempts = 0
+        while True:
+            attempts += 1
+            try:
+                self.__engine = create_engine(
+                    f"postgresql://{user}:{password}@{host}:{port}/{database}",
+                    echo=True,
+                    future=True,
+                    pool_timeout=30,
+                )
+                self.Base.metadata.create_all(self.__engine)
+                break
+            except OperationalError:
+                if attempts > 3:
+                    raise ConnectionError("Cannot connect to postgres instance.")
+                sleep(5)
 
     def read_values(self, object_classes: List[str] = None) -> List[ObjectCount]:
         session = Session(self.__engine)
@@ -86,10 +98,8 @@ class CountPostgresDBRepo(ObjectCountRepo):
         return object_counts
 
     def update_values(self, new_values: List[ObjectCount]):
-        print("update values")
         with Session(self.__engine) as session:
             for value in new_values:
-                print(value)
                 stmt = select(self.DbObjectCount).where(self.DbObjectCount.object_class == value.object_class)
                 if session.scalar(stmt):
                     stmt = update(self.DbObjectCount).where(self.DbObjectCount.object_class == value.object_class).values(count=self.DbObjectCount.count + value.count)
