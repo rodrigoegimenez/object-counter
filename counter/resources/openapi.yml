@@ -71,7 +71,7 @@ paths:
                         }
                       ]
                     }
-  /predict-objects:
+  /object-predict:
     post:
       tags:
         - object counter

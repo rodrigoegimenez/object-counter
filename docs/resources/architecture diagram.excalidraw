@@ -2186,8 +2186,8 @@
     },
     {
       "type": "text",
-      "version": 351,
-      "versionNonce": 146904121,
+      "version": 386,
+      "versionNonce": 462905529,
       "isDeleted": false,
       "id": "MLlSAdHmvM5BaGUKJh-C2",
       "fillStyle": "solid",
@@ -2196,12 +2196,12 @@
       "roughness": 1,
       "opacity": 100,
       "angle": 0,
-      "x": 1139.2123871403828,
+      "x": 1138.0958963896103,
       "y": 782.125956188287,
       "strokeColor": "#000000",
       "backgroundColor": "transparent",
-      "width": 89.76701849845502,
-      "height": 16.53602972339961,
+      "width": 92,
+      "height": 17,
       "seed": 1287216811,
       "groupIds": [
         "9iFy57D9K15ejXihRgyL8"
@@ -2213,17 +2213,17 @@
           "type": "arrow"
         }
       ],
-      "updated": 1655469129008,
+      "updated": 1655471177096,
       "link": null,
       "locked": false,
       "fontSize": 12.598879789256838,
       "fontFamily": 1,
-      "text": "/prediction-list",
-      "baseline": 11.536029723399611,
+      "text": "/object-predict",
+      "baseline": 12,
       "textAlign": "center",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "/prediction-list"
+      "originalText": "/object-predict"
     },
     {
       "id": "ROGtY720y2E3Uhs8Bx2Ce",

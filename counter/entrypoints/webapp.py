@@ -22,8 +22,8 @@ def object_detection():
     return jsonify(count_response)
 
 
-@app.route("/predict-objects", methods=["POST"])
-def predict_objects():
+@app.route("/object-predict", methods=["POST"])
+def object_predict():
     uploaded_file = request.files["file"]
     threshold = float(request.form.get("threshold", 0.5))
     model_name = request.form.get('model_name', "rfcn")
@@ -31,6 +31,7 @@ def predict_objects():
     uploaded_file.save(image)
     prediction_response = prediction_action.execute(image, threshold, model_name)
     return jsonify(prediction_response)
+
 
 @app.route("/openapi.yml")
 def openapi():
