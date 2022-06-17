@@ -6,3 +6,4 @@ pytest==7.1.2
 requests==2.28.0
 psycopg2-binary==2.9.3
 SQLAlchemy==1.4.37
+flask-swagger-ui

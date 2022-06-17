@@ -1,0 +1,180 @@
+openapi: 3.0.1
+info:
+  title: Object Predictor and Counter
+  version: 1.0.0
+tags:
+  - name: object counter
+    description: Counting objects
+paths:
+  /object-count:
+    post:
+      tags:
+        - object counter
+      summary: Count the detected objects on the image that surpass the specified accuracy threshold
+      operationId: objectCount
+      requestBody:
+        description: Prediction data
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                threshold:
+                  description: The minimum accuracy for the detected objects
+                  type: number
+                file:
+                  description: The image to process
+                  type: string
+                  format: binary
+        required: true
+      responses:
+        '200':
+          description: Detected objects count and total objects count
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountResponse'
+              examples:
+                'sample_response':
+                  value: |-
+                    {
+                      "current_objects": [
+                        {
+                          "count": 1,
+                          "object_class": "bowl"
+                        },
+                        {
+                          "count": 1,
+                          "object_class": "cup"
+                        },
+                        {
+                          "count": 1,
+                          "object_class": "dining table"
+                        }
+                      ],
+                      "total_objects": [
+                        {
+                          "count": 2,
+                          "object_class": "person"
+                        },
+                        {
+                          "count": 2,
+                          "object_class": "tennis racket"
+                        },
+                        {
+                          "count": 2,
+                          "object_class": "sports ball"
+                        },
+                        {
+                          "count": 1,
+                          "object_class": "bowl"
+                        },
+                        {
+                          "count": 1,
+                          "object_class": "cup"
+                        },
+                        {
+                          "count": 1,
+                          "object_class": "dining table"
+                        }
+                      ]
+                    }
+  /predict-objects:
+    post:
+      tags:
+        - object counter
+      summary: Returns the predicted objects on the image that surpass the specified accuracy threshold
+      operationId: predictObjects
+      requestBody:
+        description: Prediction data
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                threshold:
+                  description: The minimum accuracy for the detected objects
+                  type: number
+                file:
+                  description: The image to process
+                  type: string
+                  format: binary
+        required: true
+      responses:
+        '200':
+          description: List of predicted objects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictionResponse'
+              examples:
+                'sample_response':
+                  value: |-
+                    {
+                      "predictions": [
+                        {
+                          "box": {
+                            "xmax": 0.735821366,
+                            "xmin": 0.367288858,
+                            "ymax": 0.6988855,
+                            "ymin": 0.278333396
+                          },
+                          "class_name": "cat",
+                          "score": 0.999190748
+                        }
+                      ]
+                    }
+components:
+  schemas:
+    ObjectCount:
+      type: object
+      properties:
+        object_class:
+          type: string
+        count:
+          type: integer
+          format: int64
+      xml:
+        name: ObjectCount
+    CountResponse:
+      type: object
+      properties:
+        current_objects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectCount'
+        total_objects:
+          type: array
+          items:
+           $ref: '#/components/schemas/ObjectCount'
+      xml:
+        name: CountResponse
+    Box:
+      type: object
+      properties:
+        xmin:
+          type: number
+        ymin:
+          type: number
+        xmax:
+          type: number
+        ymax:
+          type: number
+    Prediction:
+      type: object
+      properties:
+        class_name:
+          type: string
+        score:
+          type: number
+        box:
+          $ref: '#/components/schemas/Box'
+    PredictionResponse:
+      type: object
+      properties:
+        predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Prediction'
+      xml:
+        name: Predictions
