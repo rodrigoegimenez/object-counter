@@ -5,6 +5,8 @@ The goal of this repo is demonstrate how to apply Hexagonal Architecture in a ML
 The model used in this example has been taken from 
 [IntelAI](https://github.com/IntelAI/models/blob/master/docs/object_detection/tensorflow_serving/Tutorial.md)
 
+## Documentation
+Functional documentation can be found [here](docs)
 
 ## Download the model
 ```
