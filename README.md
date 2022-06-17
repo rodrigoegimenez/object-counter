@@ -14,6 +14,14 @@ make download_model
 ```
 
 ## Testing the app
+### Using docker
+The easiest way to launch the app is using docker compose, first you'll
+need to create an `.env` file using the `.env_example` provided and then launching
+```bash
+docker compose up
+```
+and then opening the web interface at http://localhost:5000
+
 ### Using make
 #### Setup and run Tensorflow Serving
 
@@ -36,13 +44,6 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
-
-### Using docker
-Edit the docker-compose.yml file to set the environment variables then execute the following command:
-```bash
-docker-compose up -d
-```
-
 
 ## Run the application
 
