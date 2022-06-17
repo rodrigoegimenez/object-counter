@@ -20,14 +20,16 @@ class FakeObjectDetector(ObjectDetector):
 
 
 class TFSObjectDetector(ObjectDetector):
-    def __init__(self, host, port, model):
-        self.url = f"http://{host}:{port}/v1/models/{model}:predict"
+    def __init__(self, host, port):
+        self.url = f"http://{host}:{port}/v1/models/%s:predict"
         self.classes_dict = self.__build_classes_dict()
 
-    def predict(self, image: BinaryIO) -> List[Prediction]:
+    def predict(self, image: BinaryIO, model_name: str) -> List[Prediction]:
         np_image = self.__to_np_array(image)
         predict_request = '{"instances" : %s}' % np.expand_dims(np_image, 0).tolist()
-        response = requests.post(self.url, data=predict_request)
+        response = requests.post(self.url % model_name, data=predict_request)
+        if response.status_code == 404:
+            raise ValueError("Model with the name %s not found" % model_name)
         predictions = response.json()['predictions'][0]
         return self.__raw_predictions_to_domain(predictions)
 

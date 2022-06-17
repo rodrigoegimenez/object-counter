@@ -14,10 +14,11 @@ prediction_action = config.get_prediction_action()
 @app.route('/object-count', methods=['POST'])
 def object_detection():
     uploaded_file = request.files['file']
+    model_name = request.form.get('model_name', "rfcn")
     threshold = float(request.form.get('threshold', 0.5))
     image = BytesIO()
     uploaded_file.save(image)
-    count_response = count_action.execute(image, threshold)
+    count_response = count_action.execute(image, threshold, model_name)
     return jsonify(count_response)
 
 
@@ -25,9 +26,10 @@ def object_detection():
 def predict_objects():
     uploaded_file = request.files["file"]
     threshold = float(request.form.get("threshold", 0.5))
+    model_name = request.form.get('model_name', "rfcn")
     image = BytesIO()
     uploaded_file.save(image)
-    prediction_response = prediction_action.execute(image, threshold)
+    prediction_response = prediction_action.execute(image, threshold, model_name)
     return jsonify(prediction_response)
 
 @app.route("/openapi.yml")

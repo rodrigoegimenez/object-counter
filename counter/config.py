@@ -14,7 +14,7 @@ def prod_count_action() -> CountDetectedObjects:
     tfs_port = os.environ.get('TFS_PORT', 8501)
     db_engine = os.environ.get("DB_ENGINE", "mongo")
     print(db_engine)
-    detector = TFSObjectDetector(tfs_host, tfs_port, 'rfcn')
+    detector = TFSObjectDetector(tfs_host, tfs_port)
     if db_engine == "mongo":
         mongo_host = os.environ.get('MONGO_HOST', 'localhost')
         mongo_port = os.environ.get('MONGO_PORT', 27017)
@@ -48,7 +48,7 @@ def dev_prediction_action() -> PredictObjects:
 def prod_prediction_action() -> PredictObjects:
     tfs_host = os.environ.get('TFS_HOST', 'localhost')
     tfs_port = os.environ.get('TFS_PORT', 8501)
-    return PredictObjects(TFSObjectDetector(host=tfs_host, port=tfs_port, model='rfcn'))
+    return PredictObjects(TFSObjectDetector(host=tfs_host, port=tfs_port))
 
 
 def get_prediction_action():

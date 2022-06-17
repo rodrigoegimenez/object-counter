@@ -6,7 +6,7 @@ services:
       - "8500:8500"
       - "8501:8501"
     volumes:
-      - ./tmp/model:/models/rfcn
+      - ./tmp/model:/models/
     environment:
       TENSORFLOW_INTER_OP_PARALLELISM: 2
       TENSORFLOW_INTRA_OP_PARALLELISM: 2

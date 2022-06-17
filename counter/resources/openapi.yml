@@ -17,15 +17,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                threshold:
-                  description: The minimum accuracy for the detected objects
-                  type: number
-                file:
-                  description: The image to process
-                  type: string
-                  format: binary
+              $ref: '#/components/schemas/InputForm'
         required: true
       responses:
         '200':
@@ -90,15 +82,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                threshold:
-                  description: The minimum accuracy for the detected objects
-                  type: number
-                file:
-                  description: The image to process
-                  type: string
-                  format: binary
+              $ref: '#/components/schemas/InputForm'
         required: true
       responses:
         '200':
@@ -126,6 +110,21 @@ paths:
                     }
 components:
   schemas:
+    InputForm:
+      type: object
+      properties:
+        threshold:
+          description: The minimum accuracy for the detected objects
+          type: number
+        file:
+          description: The image to process
+          type: string
+          format: binary
+        model_name:
+          description: The name of the model to use
+          type: string
+          default: rfcn
+          enum: [rfcn]
     ObjectCount:
       type: object
       properties:

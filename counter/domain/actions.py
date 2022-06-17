@@ -11,15 +11,15 @@ class CountDetectedObjects:
         self.__object_detector = object_detector
         self.__object_count_repo = object_count_repo
 
-    def execute(self, image, threshold) -> CountResponse:
-        predictions = self.__find_valid_predictions(image, threshold)
+    def execute(self, image, threshold, model_name) -> CountResponse:
+        predictions = self.__find_valid_predictions(image, threshold, model_name)
         object_counts = count(predictions)
         self.__object_count_repo.update_values(object_counts)
         total_objects = self.__object_count_repo.read_values()
         return CountResponse(current_objects=object_counts, total_objects=total_objects)
 
-    def __find_valid_predictions(self, image, threshold):
-        predictions = self.__object_detector.predict(image)
+    def __find_valid_predictions(self, image, threshold, model_name):
+        predictions = self.__object_detector.predict(image, model_name)
         self.__debug_image(image, predictions, "all_predictions.jpg")
         valid_predictions = list(over_threshold(predictions, threshold=threshold))
         self.__debug_image(image, valid_predictions, f"valid_predictions_with_threshold_{threshold}.jpg")
@@ -38,13 +38,13 @@ class PredictObjects:
     ):
         self.__object_detector = object_detector
 
-    def execute(self, image, threshold) -> PredictionResponse:
-        predictions = self.__find_valid_predictions(image, threshold)
+    def execute(self, image, threshold, model_name) -> PredictionResponse:
+        predictions = self.__find_valid_predictions(image, threshold, model_name)
         print(predictions)
         return PredictionResponse(predictions=predictions)
 
-    def __find_valid_predictions(self, image, threshold):
-        predictions = self.__object_detector.predict(image)
+    def __find_valid_predictions(self, image, threshold, model_name):
+        predictions = self.__object_detector.predict(image, model_name)
         self.__debug_image(image, predictions, "all_predictions.jpg")
         valid_predictions = list(over_threshold(predictions, threshold=threshold))
         self.__debug_image(image, valid_predictions, f"valid_predictions_with_threshold_{threshold}.jpg")

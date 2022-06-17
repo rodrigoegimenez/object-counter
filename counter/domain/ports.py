@@ -6,7 +6,7 @@ from counter.domain.models import Prediction, ObjectCount
 
 class ObjectDetector(ABC):
     @abstractmethod
-    def predict(self, image: BinaryIO) -> List[Prediction]:
+    def predict(self, image: BinaryIO, model_name: str) -> List[Prediction]:
         raise NotImplementedError
 
 
