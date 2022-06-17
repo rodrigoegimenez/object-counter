@@ -1,6 +1,8 @@
 from typing import List
 
 from pymongo import MongoClient
+from sqlalchemy import Column, Integer, String, create_engine, select, update, insert
+from sqlalchemy.orm import declarative_base, Session
 
 from counter.domain.models import ObjectCount
 from counter.domain.ports import ObjectCountRepo
@@ -54,3 +56,44 @@ class CountMongoDBRepo(ObjectCountRepo):
         for value in new_values:
             counter_col.update_one({'object_class': value.object_class}, {'$inc': {'count': value.count}}, upsert=True)
 
+
+class CountPostgresDBRepo(ObjectCountRepo):
+    Base = declarative_base()
+
+    class DbObjectCount(Base):
+        __tablename__ = "object_count"
+        id = Column(Integer, primary_key=True, autoincrement=True)
+        object_class = Column(String(30), unique=True, nullable=False)
+        count = Column(Integer, unique=False, nullable=False)
+
+    def __init__(self, host, port, database, user, password):
+        self.__engine = create_engine(
+            f"postgresql://{user}:{password}@{host}:{port}/{database}",
+            echo=True,
+            future=True,
+        )
+        self.Base.metadata.create_all(self.__engine)
+
+    def read_values(self, object_classes: List[str] = None) -> List[ObjectCount]:
+        session = Session(self.__engine)
+
+        stmt = select(self.DbObjectCount).where(
+            self.DbObjectCount.object_class.in_(object_classes) if object_classes else True
+        )
+        object_counts = []
+        for counter in session.scalars(stmt):
+            object_counts.append(ObjectCount(counter.object_class, counter.count))
+        return object_counts
+
+    def update_values(self, new_values: List[ObjectCount]):
+        print("update values")
+        with Session(self.__engine) as session:
+            for value in new_values:
+                print(value)
+                stmt = select(self.DbObjectCount).where(self.DbObjectCount.object_class == value.object_class)
+                if session.scalar(stmt):
+                    stmt = update(self.DbObjectCount).where(self.DbObjectCount.object_class == value.object_class).values(count=self.DbObjectCount.count + value.count)
+                else:
+                    stmt = insert(self.DbObjectCount).values(object_class=value.object_class, count=value.count)
+                session.execute(stmt)
+            session.commit()

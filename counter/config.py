@@ -1,6 +1,6 @@
 import os
 
-from counter.adapters.count_repo import CountMongoDBRepo, CountInMemoryRepo
+from counter.adapters.count_repo import CountMongoDBRepo, CountInMemoryRepo, CountPostgresDBRepo
 from counter.adapters.object_detector import TFSObjectDetector, FakeObjectDetector
 from counter.domain.actions import CountDetectedObjects, PredictObjects
 
@@ -11,12 +11,28 @@ def dev_count_action() -> CountDetectedObjects:
 
 def prod_count_action() -> CountDetectedObjects:
     tfs_host = os.environ.get('TFS_HOST', 'localhost')
-    tfs_port = int(os.environ.get('TFS_PORT', 8501))
-    mongo_host = os.environ.get('MONGO_HOST', 'localhost')
-    mongo_port = int(os.environ.get('MONGO_PORT', 27017))
-    mongo_db = os.environ.get('MONGO_DB', 'prod_counter')
-    return CountDetectedObjects(TFSObjectDetector(tfs_host, tfs_port, 'rfcn'),
-                                CountMongoDBRepo(host=mongo_host, port=mongo_port, database=mongo_db))
+    tfs_port = os.environ.get('TFS_PORT', 8501)
+    db_engine = os.environ.get("DB_ENGINE", "mongo")
+    print(db_engine)
+    detector = TFSObjectDetector(tfs_host, tfs_port, 'rfcn')
+    if db_engine == "mongo":
+        mongo_host = os.environ.get('MONGO_HOST', 'localhost')
+        mongo_port = os.environ.get('MONGO_PORT', 27017)
+        mongo_db = os.environ.get('MONGO_DB', 'prod_counter')
+        db_repo = CountMongoDBRepo(host=mongo_host, port=mongo_port, database=mongo_db)
+    elif db_engine == "postgres":
+        postgres_host = os.environ.get('POSTGRES_HOST', 'localhost')
+        postgres_port = os.environ.get('POSTGRES_PORT', 5432)
+        postgres_db = os.environ.get('POSTGRES_DB', 'prod_counter')
+        postgres_user = os.environ.get('POSTGRES_USER', 'postgres')
+        postgres_password = os.environ.get('POSTGRES_PASSWORD', 'postgres')
+        db_repo = CountPostgresDBRepo(host=postgres_host, port=postgres_port, database=postgres_db,
+                                       user=postgres_user, password=postgres_password)
+
+    else:
+        raise ValueError("Unknown database engine %s" % db_engine)
+
+    return CountDetectedObjects(detector, db_repo)
 
 
 def get_count_action() -> CountDetectedObjects:
