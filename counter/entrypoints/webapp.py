@@ -19,8 +19,8 @@ def object_detection():
     return jsonify(count_response)
 
 
-@app.route("/prediction-list", methods=["POST"])
-def prediction_list():
+@app.route("/predict-objects", methods=["POST"])
+def predict_objects():
     uploaded_file = request.files["file"]
     threshold = float(request.form.get("threshold", 0.5))
     image = BytesIO()
