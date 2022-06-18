@@ -23,17 +23,17 @@ class TestCountDetectedObjects:
         return Mock()
 
     def test_count_valid_predictions(self, object_detector, count_object_repo) -> None:
-        response = CountDetectedObjects(object_detector, count_object_repo).execute(None, 0.5)
+        response = CountDetectedObjects(object_detector, count_object_repo).execute(None, 0.5, "rfcn")
         assert sorted(response.current_objects, key=lambda x: x.object_class) == \
             [ObjectCount('cat', 2), ObjectCount('dog', 1), ObjectCount('rabbit', 1)]
 
     def test_update_count_object_repo(self, object_detector, count_object_repo):
-        CountDetectedObjects(object_detector, count_object_repo).execute(None, 0)
+        CountDetectedObjects(object_detector, count_object_repo).execute(None, 0, "rfcn")
         count_object_repo.update_values.assert_called_with(
             [ObjectCount('cat', 2), ObjectCount('dog', 2), ObjectCount('rabbit', 1)])
 
     def test_predict_detected_objects(self, object_detector) -> None:
-        response = PredictObjects(object_detector).execute(None, 0.5)
+        response = PredictObjects(object_detector).execute(None, 0.5, "rfcn")
         assert response.predictions == \
                [generate_prediction('cat', 0.9),
                 generate_prediction('cat', 0.8),
