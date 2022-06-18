@@ -2,16 +2,15 @@ from time import sleep
 from typing import List
 
 from pymongo import MongoClient
-from sqlalchemy import Column, Integer, String, create_engine, select, update, insert
-from sqlalchemy.orm import declarative_base, Session
+from sqlalchemy import Column, Integer, String, create_engine, insert, select, update
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import Session, declarative_base
 
 from counter.domain.models import ObjectCount
 from counter.domain.ports import ObjectCountRepo
 
 
 class CountInMemoryRepo(ObjectCountRepo):
-
     def __init__(self):
         self.store = dict()
 
@@ -26,13 +25,14 @@ class CountInMemoryRepo(ObjectCountRepo):
             key = new_object_count.object_class
             try:
                 stored_object_count = self.store[key]
-                self.store[key] = ObjectCount(key, stored_object_count.count + new_object_count.count)
+                self.store[key] = ObjectCount(
+                    key, stored_object_count.count + new_object_count.count
+                )
             except KeyError:
                 self.store[key] = ObjectCount(key, new_object_count.count)
 
 
 class CountMongoDBRepo(ObjectCountRepo):
-
     def __init__(self, host, port, database):
         self.__host = host
         self.__port = port
@@ -50,13 +50,17 @@ class CountMongoDBRepo(ObjectCountRepo):
         counters = counter_col.find(query)
         object_counts = []
         for counter in counters:
-            object_counts.append(ObjectCount(counter['object_class'], counter['count']))
+            object_counts.append(ObjectCount(counter["object_class"], counter["count"]))
         return object_counts
 
     def update_values(self, new_values: List[ObjectCount]):
         counter_col = self.__get_counter_col()
         for value in new_values:
-            counter_col.update_one({'object_class': value.object_class}, {'$inc': {'count': value.count}}, upsert=True)
+            counter_col.update_one(
+                {"object_class": value.object_class},
+                {"$inc": {"count": value.count}},
+                upsert=True,
+            )
 
 
 class CountPostgresDBRepo(ObjectCountRepo):
@@ -90,7 +94,9 @@ class CountPostgresDBRepo(ObjectCountRepo):
         session = Session(self.__engine)
 
         stmt = select(self.DbObjectCount).where(
-            self.DbObjectCount.object_class.in_(object_classes) if object_classes else True
+            self.DbObjectCount.object_class.in_(object_classes)
+            if object_classes
+            else True
         )
         object_counts = []
         for counter in session.scalars(stmt):
@@ -100,10 +106,18 @@ class CountPostgresDBRepo(ObjectCountRepo):
     def update_values(self, new_values: List[ObjectCount]):
         with Session(self.__engine) as session:
             for value in new_values:
-                stmt = select(self.DbObjectCount).where(self.DbObjectCount.object_class == value.object_class)
+                stmt = select(self.DbObjectCount).where(
+                    self.DbObjectCount.object_class == value.object_class
+                )
                 if session.scalar(stmt):
-                    stmt = update(self.DbObjectCount).where(self.DbObjectCount.object_class == value.object_class).values(count=self.DbObjectCount.count + value.count)
+                    stmt = (
+                        update(self.DbObjectCount)
+                        .where(self.DbObjectCount.object_class == value.object_class)
+                        .values(count=self.DbObjectCount.count + value.count)
+                    )
                 else:
-                    stmt = insert(self.DbObjectCount).values(object_class=value.object_class, count=value.count)
+                    stmt = insert(self.DbObjectCount).values(
+                        object_class=value.object_class, count=value.count
+                    )
                 session.execute(stmt)
             session.commit()

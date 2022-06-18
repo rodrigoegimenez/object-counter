@@ -10,5 +10,10 @@ resources = Path(__file__).parent.parent.parent / "resources"
 
 
 def test_counting_using_fake_detector(test_client):
-    response = test_client.post("/object-count", data={"file": (resources / "images" / "boy.jpg").open("rb"), })
+    response = test_client.post(
+        "/object-count",
+        data={
+            "file": (resources / "images" / "boy.jpg").open("rb"),
+        },
+    )
     assert response.status_code == 200

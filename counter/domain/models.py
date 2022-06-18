@@ -28,6 +28,7 @@ class CountResponse:
     current_objects: List[ObjectCount]
     total_objects: List[ObjectCount]
 
+
 @dataclass
 class PredictionResponse:
     predictions: List[Prediction]
