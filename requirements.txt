@@ -8,3 +8,4 @@ psycopg2-binary==2.9.3
 SQLAlchemy==1.4.37
 flask-swagger-ui==4.11.1
 click==8.1.3
+dataclasses-json==0.5.7

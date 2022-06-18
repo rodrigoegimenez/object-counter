@@ -85,6 +85,8 @@ ENV=prod python -m counter.entrypoints.webapp
 
 ## Call the service
 
+### Using the REST endpoints
+
 You can call the service using the Swagger UI or using cURL:
 
 ```shell script
@@ -94,8 +96,23 @@ You can call the service using the Swagger UI or using cURL:
 ```
 
 If you wish to specify the model name to use for inference you can do so passing the `model_name` option:
+
 ```shell script
  curl -F "model_name=rfcn" -F "threshold=0.9" -F "file=@resources/images/boy.jpg" http://0.0.0.0:5000/object-count
+```
+
+### Using the CLI
+
+#### Counting objects
+
+```bash
+python -m counter.entrypoints.main count --img-path resources/images/food.jpg --threshold 0.9
+```
+
+#### Getting predictions
+
+```bash
+python -m counter.entrypoints.main predict --img-path resources/images/food.jpg --threshold 0.9
 ```
 
 ## Run the tests

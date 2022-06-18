@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 
+from dataclasses_json import dataclass_json
+
 
 @dataclass
 class Box:
@@ -23,12 +25,14 @@ class ObjectCount:
     count: int
 
 
+@dataclass_json
 @dataclass
 class CountResponse:
     current_objects: List[ObjectCount]
     total_objects: List[ObjectCount]
 
 
+@dataclass_json
 @dataclass
 class PredictionResponse:
     predictions: List[Prediction]

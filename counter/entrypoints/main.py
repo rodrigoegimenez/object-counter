@@ -1,3 +1,5 @@
+import json
+
 import click
 
 from counter import config
@@ -23,7 +25,7 @@ def cli():
 def count(img_path: str, threshold: float, model_name: str):
     with open(img_path, "rb") as img:
         predictions = config.get_count_action().execute(img, threshold, model_name)
-        print(predictions)
+        print(predictions.to_json(indent=2))
 
 
 @cli.command()
@@ -41,7 +43,7 @@ def count(img_path: str, threshold: float, model_name: str):
 def predict(img_path: str, threshold: float, model_name: str):
     with open(img_path, "rb") as img:
         predictions = config.get_prediction_action().execute(img, threshold, model_name)
-        print(predictions)
+        print(predictions.to_json(indent=2))
 
 
 if __name__ == "__main__":
