@@ -93,6 +93,11 @@ You can call the service using the Swagger UI or using cURL:
  curl -F "threshold=0.9" -F "file=@resources/images/food.jpg" http://0.0.0.0:5000/object-count
 ```
 
+If you wish to specify the model name to use for inference you can do so passing the `model_name` option:
+```shell script
+ curl -F "model_name=rfcn" -F "threshold=0.9" -F "file=@resources/images/boy.jpg" http://0.0.0.0:5000/object-count
+```
+
 ## Run the tests
 
 ```
