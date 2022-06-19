@@ -23,23 +23,24 @@ class CountInMemoryRepo(ObjectCountRepo):
     def update_values(self, new_values: List[ObjectCount]):
         for new_object_count in new_values:
             key = new_object_count.object_class
-            try:
-                stored_object_count = self.store[key]
-                self.store[key] = ObjectCount(
-                    key, stored_object_count.count + new_object_count.count
-                )
-            except KeyError:
-                self.store[key] = ObjectCount(key, new_object_count.count)
+            stored_object_count = self.store.get(key, ObjectCount(key, 0))
+            self.store[key] = ObjectCount(
+                key, stored_object_count.count + new_object_count.count
+            )
 
 
 class CountMongoDBRepo(ObjectCountRepo):
-    def __init__(self, host, port, database):
+    def __init__(self, host, port, database, username=None, password=None):
         self.__host = host
         self.__port = port
+        self.__username = username
+        self.__password = password
         self.__database = database
 
     def __get_counter_col(self):
-        client = MongoClient(self.__host, self.__port)
+        client = MongoClient(
+            self.__host, self.__port, username=self.__username, password=self.__password
+        )
         db = client[self.__database]
         counter_col = db.counter
         return counter_col
